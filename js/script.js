@@ -17,11 +17,23 @@ document.addEventListener('DOMContentLoaded', () => {
       const ul = document.querySelector('.student-list');
 
       ul.innerHTML = '';
-   
-      for (let i=0; i<list.length; i++) {
-         if (i >= startIndex && i < endIndex) {
-            const li = list[i];
-            ul.appendChild(li);
+
+      if (list.length === 0) {
+         const div = document.createElement('div');
+         div.style.fontStyle = 'italic';
+         div.style.backgroundColor = 'tomato';
+         div.style.padding = '10px'
+         const h4 = document.createElement('h4');
+         
+         h4.textContent = 'Your query returns no results';
+         div.appendChild(h4);
+         ul.appendChild(div);
+      } else {
+         for (let i=0; i<list.length; i++) {
+            if (i >= startIndex && i < endIndex) {
+               const li = list[i];
+               ul.appendChild(li);
+            }
          }
       }
    }
