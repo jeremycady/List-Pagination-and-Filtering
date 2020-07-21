@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
    const showPage = (list, page) => {
       const startIndex = (page * countPerPage) - countPerPage;
       const endIndex = page * countPerPage;
-      const ul = document.querySelector('ul');
+      const ul = document.querySelector('.student-list');
 
       ul.innerHTML = '';
    
@@ -26,19 +26,31 @@ document.addEventListener('DOMContentLoaded', () => {
       }
    }
 
-   /*** 
-      appendPageLinks adds page links to the bottom of the page
-   ***/
-   const appendPageLinks = (list) => {
-      const numberOfPages = Math.ceil(list.length / countPerPage)
-      const pageDiv = document.querySelector('.page');
-      const paginationDiv = document.createElement('div');
-      const ul = document.createElement('ul');
+   // update the student list based on search query
+   const updateList = () => {
+      const list = studentList;
+      const input = document.querySelector('input');
+      const value = input.value;
+      if (value.length > 0) {
+         const newList = [];
+         for (let i=0; i<list.length; i++) {
+            const li = list[i];
+            const div = li.firstElementChild;
+            const img = div.firstElementChild;
+            const h3 = img.nextElementSibling;
 
-      paginationDiv.className = 'pagination';
-      pageDiv.appendChild(paginationDiv);
-      paginationDiv.appendChild(ul);
+            if (h3.textContent.includes(input.value)) {
+               newList.push(li);
+            }
+         }
+         return newList;
+      } else {
+         return studentList;
+      }
+   }
 
+   // create page links on initial and search
+   const createPageLinks = (numberOfPages, ul) => {
       for (let i=1; i<=numberOfPages; i++) {
          const li = document.createElement('li');
          const a = document.createElement('a');
@@ -54,6 +66,31 @@ document.addEventListener('DOMContentLoaded', () => {
       }
    }
 
+   //  appendPageLinks adds page links to the bottom of the page
+   const appendPageLinks = (list) => {
+      const numberOfPages = Math.ceil(list.length / countPerPage)
+      const pageDiv = document.querySelector('.page');
+      const paginationDiv = document.createElement('div');
+      const ul = document.createElement('ul');
+
+      paginationDiv.className = 'pagination';
+      pageDiv.appendChild(paginationDiv);
+      paginationDiv.appendChild(ul);
+
+      createPageLinks(numberOfPages, ul);
+   }
+
+   // update page links given the a new list length
+   const updatePageLinks = (list) => {
+      const numberOfPages = Math.ceil(list.length / countPerPage)
+      const paginationDiv = document.querySelector('.pagination');
+      const ul = paginationDiv.firstElementChild;
+
+      ul.innerHTML = '';
+
+      createPageLinks(numberOfPages, ul);
+   }
+
    // add search input
    const searchInput = () => {
       const header = document.querySelector('.page-header');
@@ -67,7 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
       header.appendChild(div);
    }
 
-   // call the initial functions
+   // call the initial functions to begin
    showPage(studentList, 1);
    appendPageLinks(studentList);
    searchInput();
@@ -83,10 +120,11 @@ document.addEventListener('DOMContentLoaded', () => {
          const links = document.querySelectorAll('a');
          const link = event.target;
          const page = link.textContent;
+         const list = updateList();
 
          currentActive.className = '';
 
-         showPage(studentList, page);
+         showPage(list, page);
          
          for (let i=1; i<=links.length; i++) {
             if (i === parseInt(page)) {
@@ -94,5 +132,14 @@ document.addEventListener('DOMContentLoaded', () => {
             }
          }
       }
+   });
+
+   // listen for keyup in search and update pages  
+   document.addEventListener('keyup', (event) => {
+      if (event.target.tagName === 'INPUT') {
+         const list = updateList();
+         showPage(list,1);
+         updatePageLinks(list);
+      } 
    });
 });
