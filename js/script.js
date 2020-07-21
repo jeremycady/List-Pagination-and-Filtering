@@ -54,9 +54,23 @@ document.addEventListener('DOMContentLoaded', () => {
       }
    }
 
-   // call the initial page and add page links
+   // add search input
+   const searchInput = () => {
+      const header = document.querySelector('.page-header');
+      const div = document.createElement('div');
+      const input = document.createElement('input');
+      
+      input.placeholder = 'Search for Students...';
+      div.className = 'student-search';
+
+      div.appendChild(input);
+      header.appendChild(div);
+   }
+
+   // call the initial functions
    showPage(studentList, 1);
    appendPageLinks(studentList);
+   searchInput();
 
    /***
       listens for a click on page links
